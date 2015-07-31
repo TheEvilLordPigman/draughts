@@ -33,10 +33,10 @@
     <ClCompile Include="DraughtsModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\draughts-genetic\DraughtsAI.cpp">
+    <ClCompile Include="..\..\draughts-genetic\Heuristic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\draughts-genetic\Heuristic.cpp">
+    <ClCompile Include="DraughtsAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

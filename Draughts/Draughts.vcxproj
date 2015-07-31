@@ -86,10 +86,10 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\draughts-genetic\DraughtsAI.cpp" />
     <ClCompile Include="..\..\draughts-genetic\Heuristic.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Draughts.cpp" />
+    <ClCompile Include="DraughtsAI.cpp" />
     <ClCompile Include="DraughtsModule.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

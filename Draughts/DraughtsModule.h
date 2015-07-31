@@ -6,6 +6,7 @@
 #ifndef DRAUGHTSMODULE_H
 #define DRAUGHTSMODULE_H
 
+#include "stdafx.h"
 #include <vector> //For vector
 
 #define BOARD_WIDTH 8

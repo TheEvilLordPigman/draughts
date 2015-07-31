@@ -6,33 +6,11 @@
 #include "DraughtsAI.h"
 #include <iostream>
 
-enum HeuristicParameter {
-	PARAM_MEN,
-	PARAM_KINGS,
-	PARAM_ENEMY_MEN,
-	PARAM_ENEMY_KINGS,
-	PARAM_SAFE_MEN,
-	PARAM_SAFE_KINGS,
-	PARAM_MEN_DIST,
-	PARAM_PROMOTION_SPACE,
-	PARAM_WIN,
-	PARAM_TOTAL
-};
+AI::AI() {
 
-//Heuristic parameter coefficients (arbitrary)
-const double PARAM_MULT[PARAM_TOTAL] = {
-	1.0,
-	2.0,
-	-1.0,
-	-2.0,
-	0.25,
-	0.5,
-	-0.001,
-	0.5,
-	10
-};
+}
 
-AI::AI(cellState playercolour) {
+AI::AI(cellState playercolour, Heuristic heur) {
 	colour = playercolour;
 	if(colour == M_WHITE) {
 		direction = 1;
@@ -40,6 +18,8 @@ AI::AI(cellState playercolour) {
 		direction = -1;
 	}
 	//srand(time(0));
+	searchDepth = 0;
+	heuristic = heur;
 }
 
 cellState AI::getColour() {
@@ -148,63 +128,63 @@ std::vector<MoveSequence> AI::getAvailableCapturesFromPoint(Board board, Cell ce
 	return movelist;
 }
 
-double heuristic(Board board) {
-	cellState colour = M_WHITE;
-
-	//Initialise parameter array
-	int parameters[PARAM_TOTAL];
-	for(int i=0; i<PARAM_TOTAL; i++) {
-		parameters[HeuristicParameter(i)] = 0;
-	}
-
-	//Get parameters
-	for(int y=0; y<BOARD_HEIGHT; y++) {
-		for(int x=0; x<BOARD_WIDTH; x++) {
-			if(board.cells[y][x] == colour) {
-				parameters[PARAM_MEN] += 1;
-				if(x == 0 || x == BOARD_WIDTH-1) {
-					parameters[PARAM_SAFE_MEN] += 1;
-				}
-				if(colour == M_WHITE) {
-					parameters[PARAM_MEN_DIST] += BOARD_HEIGHT-y;
-				}
-				else {
-					parameters[PARAM_MEN_DIST] += y;
-				}
-			}
-			else if(board.cells[y][x] == colour+1) {
-				parameters[PARAM_KINGS] += 1;
-				if(x == 0 || x == BOARD_WIDTH-1) {
-					parameters[PARAM_SAFE_KINGS] += 1;
-				}
-			}
-			else if(board.cells[y][x] == otherplayer(colour)) {
-				parameters[PARAM_ENEMY_MEN] += 1;
-			}
-			else if(board.cells[y][x] == otherplayer(colour) + 1) {
-				parameters[PARAM_ENEMY_KINGS] += 1;
-			}
-			else if(x % 2 == 0) {
-				if(colour == M_WHITE && y == BOARD_HEIGHT-1) {
-					parameters[PARAM_PROMOTION_SPACE] += 1;
-				}
-				if(colour == M_BLACK && y == 0) {
-					parameters[PARAM_PROMOTION_SPACE] += 1;
-				}
-			}
-		}
-	}
-
-	if(HasWon(colour, board)) {
-		parameters[PARAM_WIN] = 1;
-	}
-
-	double result = 0.0;
-	for(int i=0; i<PARAM_TOTAL; i++) {
-		result += parameters[HeuristicParameter(i)] * PARAM_MULT[HeuristicParameter(i)];
-	}
-	return result;
-}
+//double heuristic(Board board) {
+//	cellState colour = M_WHITE;
+//
+//	//Initialise parameter array
+//	int parameters[PARAM_TOTAL];
+//	for(int i=0; i<PARAM_TOTAL; i++) {
+//		parameters[HeuristicParameter(i)] = 0;
+//	}
+//
+//	//Get parameters
+//	for(int y=0; y<BOARD_HEIGHT; y++) {
+//		for(int x=0; x<BOARD_WIDTH; x++) {
+//			if(board.cells[y][x] == colour) {
+//				parameters[PARAM_MEN] += 1;
+//				if(x == 0 || x == BOARD_WIDTH-1) {
+//					parameters[PARAM_SAFE_MEN] += 1;
+//				}
+//				if(colour == M_WHITE) {
+//					parameters[PARAM_MEN_DIST] += BOARD_HEIGHT-y;
+//				}
+//				else {
+//					parameters[PARAM_MEN_DIST] += y;
+//				}
+//			}
+//			else if(board.cells[y][x] == colour+1) {
+//				parameters[PARAM_KINGS] += 1;
+//				if(x == 0 || x == BOARD_WIDTH-1) {
+//					parameters[PARAM_SAFE_KINGS] += 1;
+//				}
+//			}
+//			else if(board.cells[y][x] == otherplayer(colour)) {
+//				parameters[PARAM_ENEMY_MEN] += 1;
+//			}
+//			else if(board.cells[y][x] == otherplayer(colour) + 1) {
+//				parameters[PARAM_ENEMY_KINGS] += 1;
+//			}
+//			else if(x % 2 == 0) {
+//				if(colour == M_WHITE && y == BOARD_HEIGHT-1) {
+//					parameters[PARAM_PROMOTION_SPACE] += 1;
+//				}
+//				if(colour == M_BLACK && y == 0) {
+//					parameters[PARAM_PROMOTION_SPACE] += 1;
+//				}
+//			}
+//		}
+//	}
+//
+//	if(HasWon(colour, board)) {
+//		parameters[PARAM_WIN] = 1;
+//	}
+//
+//	double result = 0.0;
+//	for(int i=0; i<PARAM_TOTAL; i++) {
+//		result += parameters[HeuristicParameter(i)] * PARAM_MULT[HeuristicParameter(i)];
+//	}
+//	return result;
+//}
 
 MoveSequence AI::getMove(Board board, int depth, bool nodeType) {
 	std::vector<MoveSequence> movelist;
@@ -213,11 +193,11 @@ MoveSequence AI::getMove(Board board, int depth, bool nodeType) {
 	desirabilities.reserve(movelist.size());
 	for(unsigned int i=0; i<movelist.size(); i++) {
 		if(depth == 0) {
-			desirabilities.push_back(heuristic(ExecuteMoveSequence(movelist[i],board)));
+			desirabilities.push_back(heuristic.function(ExecuteMoveSequence(movelist[i],board), colour));
 		}
 		else {
-			AI playersim(otherplayer(colour));
-			desirabilities.push_back(heuristic(ExecuteMoveSequence(playersim.getMove(ExecuteMoveSequence(movelist[i],board),depth-1,!nodeType),board)));
+			AI playersim(otherplayer(colour), heuristic);
+			desirabilities.push_back(heuristic.function(ExecuteMoveSequence(playersim.getMove(ExecuteMoveSequence(movelist[i],board),depth-1,!nodeType),board), colour));
 		}
 	}
 

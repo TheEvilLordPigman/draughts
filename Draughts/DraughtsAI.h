@@ -7,6 +7,7 @@
 
 #include "stdafx.h"
 #include "DraughtsModule.h"
+#include "Heuristic.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -15,15 +16,32 @@ const bool N_MAX = true;
 const bool N_MIN = false;
 
 //Returns the heuristic desirability value for the board state
-double heuristic(Board);
+//double heuristic(Board);
+
+//Heuristic parameter coefficients (arbitrary)
+const double PARAM_MULT[PARAM_TOTAL] = {
+	1.0,
+	2.0,
+	-1.0,
+	-2.0,
+	0.25,
+	0.5,
+	-0.001,
+	0.5,
+	10
+};
 
 class AI {
-	cellState colour;
-	int direction;
-	int searchDepth;
+	protected:
+		cellState colour;
+		int direction;
+		int searchDepth;
+		Heuristic heuristic;
 
 	public:
+		AI();
 		AI(cellState playercolour);
+		AI(cellState playercolour, Heuristic heur);
 		cellState getColour();
 		void setSearchDepth(int depth);
 		int getSearchDepth();
@@ -37,7 +55,7 @@ class AI {
 		std::vector<MoveSequence> getAvailableCapturesFromPoint(Board,Cell);
 
 		//Returns what the AI thinks is the optimal move given the board state
-		MoveSequence getMove(Board, int depth, bool nodeType = N_MAX);
+		virtual MoveSequence getMove(Board, int depth, bool nodeType = N_MAX);
 };
 
 #endif

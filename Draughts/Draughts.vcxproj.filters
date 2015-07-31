@@ -33,7 +33,10 @@
     <ClCompile Include="DraughtsModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DraughtsAI.cpp">
+    <ClCompile Include="..\..\draughts-genetic\DraughtsAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\draughts-genetic\Heuristic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DraughtsModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Heuristic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DraughtsAI.h">

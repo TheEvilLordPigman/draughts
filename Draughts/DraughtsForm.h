@@ -112,6 +112,7 @@ namespace Draughts {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(DraughtsForm::typeid));
 			this->dgvBoard = (gcnew System::Windows::Forms::DataGridView());
 			this->Column2 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
 			this->Column1 = (gcnew System::Windows::Forms::DataGridViewImageColumn());
@@ -280,6 +281,7 @@ namespace Draughts {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"$this.BackgroundImage")));
 			this->ClientSize = System::Drawing::Size(646, 433);
 			this->Controls->Add(this->lblAIDepth);
 			this->Controls->Add(this->nudAIDepth);
@@ -289,6 +291,9 @@ namespace Draughts {
 			this->Controls->Add(this->lbCurrentPlayer);
 			this->Controls->Add(this->btnReset);
 			this->Controls->Add(this->dgvBoard);
+			this->MaximizeBox = false;
+			this->MaximumSize = System::Drawing::Size(662, 472);
+			this->MinimumSize = System::Drawing::Size(662, 472);
 			this->Name = L"DraughtsForm";
 			this->Text = L"Draughts";
 			this->Load += gcnew System::EventHandler(this, &DraughtsForm::DraughtsForm_Load);

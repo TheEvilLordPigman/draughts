@@ -8,8 +8,10 @@
 #include "stdafx.h"
 #include "DraughtsModule.h"
 #include "Heuristic.h"
+#include "Debug.h"
 #include <stdlib.h>
 #include <time.h>
+#include <string>
 
 const int SEARCH_DEPTH = 4;
 const bool N_MAX = true;
@@ -20,15 +22,15 @@ const bool N_MIN = false;
 
 //Heuristic parameter coefficients (arbitrary)
 const double PARAM_MULT[PARAM_TOTAL] = {
-	1.0,
-	2.0,
-	-1.0,
-	-2.0,
-	0.25,
-	0.5,
-	-0.001,
-	0.5,
-	10
+	1.00391,
+	34,
+	1.25,
+	2.125,
+	48.3164,
+	51.5156,
+	0,
+	56.5,
+	14
 };
 
 class AI {
@@ -37,6 +39,7 @@ class AI {
 		int direction;
 		int searchDepth;
 		Heuristic heuristic;
+		Debug debug;
 
 	public:
 		AI();
@@ -56,6 +59,8 @@ class AI {
 
 		//Returns what the AI thinks is the optimal move given the board state
 		virtual MoveSequence getMove(Board, int depth, bool nodeType = N_MAX, double a = -100000000, double b = 100000000);
+
+		void switchTeam();
 };
 
 #endif

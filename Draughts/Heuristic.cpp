@@ -87,23 +87,23 @@ std::string Heuristic::toString() {
 	return result;
 }
 
-std::vector<bool> Heuristic::getChromosome() {
-	std::vector<bool> result;
-	BinConverter convert(BITS,DP_INDEX);
-	for(int i=0; i<PARAM_TOTAL; i++) {
-		std::vector<bool> current = convert.decToBin(values[i]);
-		result.insert(result.end(), current.begin(), current.end());
-	}
-	return result;
-}
-
-void Heuristic::setFromChromosome(std::vector<bool> chrom) {
-	BinConverter convert(BITS-1,DP_INDEX);
-	for(int i=0; i<PARAM_TOTAL; i++) {
-		std::vector<bool> currentGene = splice(chrom, BITS*i, BITS*(i+1));
-		values[i] = convert.binToDecFloat(currentGene);
-	}
-}
+//std::vector<bool> Heuristic::getChromosome() {
+//	std::vector<bool> result;
+//	BinConverter convert(BITS,DP_INDEX);
+//	for(int i=0; i<PARAM_TOTAL; i++) {
+//		std::vector<bool> current = convert.decToBin(values[i]);
+//		result.insert(result.end(), current.begin(), current.end());
+//	}
+//	return result;
+//}
+//
+//void Heuristic::setFromChromosome(std::vector<bool> chrom) {
+//	BinConverter convert(BITS-1,DP_INDEX);
+//	for(int i=0; i<PARAM_TOTAL; i++) {
+//		std::vector<bool> currentGene = splice(chrom, BITS*i, BITS*(i+1));
+//		values[i] = convert.binToDecFloat(currentGene);
+//	}
+//}
 
 int Heuristic::getFitness() {
 	return fitness;

@@ -202,19 +202,25 @@ std::vector<MoveSequence> AI::getAvailableCapturesFromPoint(Board board, Cell ce
 //}
 
 MoveSequence AI::getMove(Board board, int depth, bool nodeType, double a, double b) {
+	//debug.tabs(searchDepth-depth);
+	//debug.writeln("At depth = " + std::to_string(static_cast<long double>(depth)));
 	double alpha = a;
 	double beta = b;
 	std::vector<MoveSequence> movelist;
 	movelist = getAvailableMoves(board);
 	std::vector<double> desirabilities;
-	desirabilities.reserve(movelist.size());
+	//desirabilities.reserve(movelist.size());
 	for(unsigned int i=0; i<movelist.size(); i++) {
 		if(depth == 0) {
-			desirabilities.push_back(heuristic.function(ExecuteMoveSequence(movelist[i],board), colour));
+			desirabilities.push_back(heuristic.function(ExecuteMoveSequence(movelist[i],board), M_WHITE));
 		}
 		else {
-			AI playersim(otherplayer(colour), heuristic);
-			desirabilities.push_back(heuristic.function(ExecuteMoveSequence(playersim.getMove(ExecuteMoveSequence(movelist[i],board),depth-1,!nodeType,alpha,beta),board), colour));
+			switchTeam();
+			double val = heuristic.function(ExecuteMoveSequence(getMove(ExecuteMoveSequence(movelist[i],board),depth-1,!nodeType,alpha,beta),board), M_WHITE);
+			//debug.tabs(searchDepth-depth);
+			//debug.writeln(std::to_string(static_cast<long double>(val)));
+			desirabilities.push_back(val);
+			switchTeam();
 		}
 		if(nodeType == N_MIN) {
 			if(desirabilities[i] < beta) {
@@ -226,6 +232,7 @@ MoveSequence AI::getMove(Board board, int depth, bool nodeType, double a, double
 				alpha = desirabilities[i];
 			}
 		}
+		
 		if(alpha > beta) {
 			break;
 		}
@@ -252,9 +259,17 @@ MoveSequence AI::getMove(Board board, int depth, bool nodeType, double a, double
 		}	
 	}
 
+	//debug.tabs(searchDepth-depth);
+	//debug.writeln("Best value for this node is " + std::to_string(static_cast<long double>(heuristic.function(ExecuteMoveSequence(movelist[bestindex],board), M_WHITE))));
+
 	if(movelist.size() > 0) {
 		return movelist[bestindex];
 	} else {
 		return MoveSequence();
 	}
+}
+
+void AI::switchTeam() {
+	colour = otherplayer(colour);
+	direction *= -1;
 }
